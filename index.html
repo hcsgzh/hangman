@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.gridContainer{
+    position: relative;
+    margin-top: 10px;
+    padding: 0 0 0 0;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+.cell {
+    width: 72px;
+    height: 36px;
+    position: relative;
+    float: left;
+    z-index: 0;
+    font-size: 14px;
+    color: #888888;
+    text-align: center;
+    line-height: 36px;
+    border-style: solid outset;
+    border-width: 1px;
+    border-color: black;
+    cursor: pointer;
+}
+.cell_white {
+    width: 72px;
+    height: 36px;
+    position: relative;
+    float: left;
+    z-index: 0;
+    font-size: 14px;
+    color: #888888;
+    text-align: center;
+    line-height: 36px;
+    border-style: solid outset;
+    border-width: 1px;
+    border-color: white;
+    cursor: pointer;
+}
+.cellBackground-blue{
+    border-color: red;
+}
+.cellBackground-black{
+    border-color: black;
+}
+.cell:hover {
+    /*background: #00CCFF;*/
+}
+.cell:hover:after {
+    content: attr(data-hover-text);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    font-size: x-small;
+    font-weight: normal;
+    font-style: normal;
+    color: #444444;
+    text-align: left;
+    line-height: 1;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(window).on('load', function() {
+
+(function (LetterGrid, $) {
+    var GRID_ROWS,
+    GRID_COLS,
+    GRID_ELEMENT,
+    WORD_SECTION;
+    
+    var word_data = ['stay cool', 'stay positive', 'how are you', 'hello world','block bit','have fun'];
+    var word = 'stay positive';
+    var single_letters;
+    
+    var columnLabel = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','&','R','S','T','U','V','W','&','X','Y','Z'];
+    var gridStore={};
+    var currentCellID;
+    var wordStore={};
+    
+    var mistake_count = 0;
+    var mode = 7;
+
+    LetterGrid.config = {
+        gridContainer: "letterGrid",
+        wordContainer: "wordSection",
+        spreadsheetInput: "spreadsheet-input:",
+    };
+
+    LetterGrid.start = function () {
+        GRID_ROWS = 4;
+        GRID_COLS = 7;
+        
+        createWordScetion();
+        createGrid();
+    };
+    
+    LetterGrid.insert = function () {
+        Object.keys(gridStore).forEach(function(key) {
+            console.log(key, gridStore[key]);
+            $("#"+key).text(gridStore[key]);
+        });
+    };
+    
+    LetterGrid.easy = function () {
+        mode = 7;
+        LetterGrid.start();
+        $("#result").append('You are in the <b>easy</b> mode now!<br>');
+    };
+    
+    LetterGrid.medium = function () {
+        mode = 6;
+        LetterGrid.start();
+        $("#result").append('You are in the <b>medium</b> mode now!<br>');
+    };
+    
+    LetterGrid.hard = function () {
+        mode = 5;
+        LetterGrid.start();
+        $("#result").append('You are in the <b>hard</b> mode now!<br>');
+    };
+    
+    function createWordScetion(){
+        //to get a random word from the word data
+        var randomNumber = Math.floor(Math.random() * word_data.length);
+        word =word_data[randomNumber];
+        
+        word = word.toUpperCase();
+        WORD_SECTION = $("#"+LetterGrid.config.wordContainer);
+        var wordArray = word.split("");
+        var newWord = $('<div id="wordSection" class="gridContainer" > </div>');
+        for (var i = 0; i < word.length; i++) {
+            var letter = wordArray[i]===" "?"":"_";
+            var letter_cell = wordArray[i]===" "?"cell_white":"cell";
+            //console.log('letter:::'+i+':'+letter);
+            $("<div id="+i+" class="+letter_cell+" data-hover-text='"+i+"'>"+letter+"</div>")
+            .appendTo(newWord);
+        }
+        
+        newWord.height(38);
+        newWord.width(74 * word.length);
+        
+        WORD_SECTION.replaceWith(newWord);
+        
+        single_letters = createNewArray(word);
+        
+        //for refresh
+        $("#result").text('');
+        mistake_count = 0;
+        
+    }
+    
+    function createGrid() {
+        GRID_ELEMENT = $("#" + LetterGrid.config.gridContainer);
+        var cell; // Contains the 1 or 0 based upon the cell selection
+        var newGrid = $('<div id="letterGrid" class="gridContainer" > </div>');
+        
+        var label_row = '';
+        var label_colume = '';
+        var cell_count=0;
+        
+
+        for (var i = 1; i <= GRID_ROWS; i++) {
+            for (var j = 1; j <= GRID_COLS; j++) {
+                label_colume = i-1;
+                label_row =j-1;
+                var id = label_row+"-"+label_colume;
+                $("<div id="+id+" class='cell' data-hover-text='"+label_row+","+label_colume+"'>"+columnLabel[cell_count]+"</div>")
+                .appendTo(newGrid)
+                .on("click", cellClick);
+                gridStore[id] = columnLabel[cell_count];
+                cell_count = cell_count+1;
+            }
+        }
+
+        newGrid.height(38 * GRID_ROWS);
+        newGrid.width(74 * GRID_COLS);
+        
+        GRID_ELEMENT.replaceWith(newGrid);
+    }
+
+    function cellClick() {
+        //$(this).text($(this).text() === "0" ? "1" : "0");
+        
+        currentCellID?$("#"+currentCellID).addClass("cellBackground-black"):null;
+        currentCellID = $(this).attr('id');
+        console.log('cellClick  $(this).id:'+$(this).attr('id')+'; value:'+gridStore[currentCellID]);
+        $("#"+currentCellID).addClass("cellBackground-blue");
+        //Spreadsheet.input();
+        
+        single_letters = hangmanCheck(single_letters,0,7,gridStore[currentCellID]);
+        isFinish(single_letters);
+    }
+    LetterGrid.InputOnChange = function () {
+        console.log('currentCellID :'+currentCellID+';  '+$("#"+currentCellID).text()+'  iuput value::'+ $("#spreadsheet-input").val());
+        $("#"+currentCellID).text( $("#spreadsheet-input").val());
+        gridStore[currentCellID] = $("#spreadsheet-input").val();
+        console.log('gridStore'+JSON.stringify(gridStore));
+    };
+    
+    function createNewArray(word){
+        var arr = word.split("");
+        var result = arr.sort().reduce((accumulator, current) => {
+            const length = accumulator.length;
+            if (length === 0 || accumulator[length - 1] !== current) {
+                accumulator.push(current);
+            }
+            return accumulator;
+        }, []);
+        console.log(arr);
+        console.log(result); //[1,2,3,4,5]
+        
+        return result;
+    }
+    
+    function getAllIndexes(arr, val) {
+        var indexes = [], i = -1;
+        while ((i = arr.indexOf(val, i+1)) !== -1){
+            indexes.push(i);
+        }
+        return indexes;
+    }
+    
+    function hangmanCheck(single_letters, steps, mode, inputLetter){
+        var single_letters_new = single_letters.filter(letter => letter !== inputLetter);
+        console.log('single_letters.length:'+single_letters.length+'; single_letters_new:'+single_letters_new.length);
+        var result_log="";
+        
+        if(single_letters_new.length === single_letters.length){
+            console.log('you lose one step! '+inputLetter);
+            result_log = 'You lose one step! '+inputLetter;
+            mistake_count = mistake_count+1;
+            
+        }else{
+            //correct choise 
+            console.log('good guess! '+inputLetter);
+            result_log = 'good guess! '+inputLetter;
+            
+            //to show in the word section
+            var word_original = word.split('');
+            var index_array = getAllIndexes(word_original,inputLetter);
+            console.log(index_array);
+            index_array.map(x=>{
+                $("#"+x).text( inputLetter );
+                $("#"+x).animate({fontSize: '20px'}, "slow");
+            });
+            
+        }
+        
+        $("#result").append(result_log+'<br>');
+        
+        return single_letters_new;
+    }
+    function isFinish(single_letters){
+         if(single_letters.length ===0 || single_letters.every(x => x === ' ')){
+            console.log('You win!');
+            window.alert('You win!');
+        }else {
+            if(mistake_count === mode){
+                window.alert('You lose!\n The answer is '+word);
+                return;
+            }
+            console.log('Keep going! watch out you step!');
+        }
+    }
+    
+    
+
+
+
+}(window.LetterGrid = window.LetterGrid || {}, jQuery));
+
+$(document).ready(function () {
+    LetterGrid.start();
+});
+});
+</script>
+<title>Hangman</title>
+</head>
+<body>
+<div id="gridLayout" class="gridContainer">
+	<div id="gridHeader">
+		<h2>Hangman</h2>
+                Mode:
+                <button type="button" onclick="LetterGrid.easy();">easy</button>
+                <button type="button" onclick="LetterGrid.medium();">medium</button>
+                <button type="button" onclick="LetterGrid.hard();">hard</button>
+                <button type="button" onclick="LetterGrid.start();">refresh</button>
+                
+	</div>
+        <div id="wordSection" class="gridContainer"></div>
+        <div class="gridContainer">Click on a letter:</div>
+	<div id="letterGrid" class="gridContainer"></div>
+        <div id="description" class="gridContainer">
+            <p>Results:</p>
+            <P id="result"></p>
+        </div>
+        <div id="instruction" class="gridContainer">
+            <h3>Instruction:</h3>
+            <p>Guess letters one at a time to solve the word puzzle. Click a letter to guess it.</p>
+        </div>
+</div>
+
+</body>
+</html>
