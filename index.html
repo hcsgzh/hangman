@@ -185,7 +185,7 @@ $(window).on('load', function() {
     function cellClick() {
         //$(this).text($(this).text() === "0" ? "1" : "0");
         
-        currentCellID?$("#"+currentCellID).addClass("cellBackground-black"):null;
+        currentCellID&& $("#"+currentCellID).css('border-color','black');
         currentCellID = $(this).attr('id');
         console.log('cellClick  $(this).id:'+$(this).attr('id')+'; value:'+gridStore[currentCellID]);
         $("#"+currentCellID).addClass("cellBackground-blue");
