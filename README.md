@@ -1,1 +1,1 @@
-"# This hangman game is developed for practice. Have fun with it." 
+"# This hangman game is developed for practice in a short time. Have fun with it." 

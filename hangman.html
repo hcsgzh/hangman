@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Hangman Game</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" type="text/css" href="hangman.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="hangman.js"></script>
+    </head>
+    <body>
+        <div id="gridLayout" class="gridContainer">
+            <div id="gridHeader">
+                <h2>Hangman</h2>
+                Mode:
+                <button type="button" onclick="hangmanEasy();">easy</button>
+                <button type="button" onclick="hangmanMedium();">medium</button>
+                <button type="button" onclick="hangmanHard();">hard</button>
+                <button type="button" onclick="hangmanStart();">refresh</button>
+
+            </div>
+            <div id="wordSection" class="gridContainer"></div>
+            <div class="gridContainer">Click on a letter:</div>
+            <div id="letterGrid" class="gridContainer"></div>
+            <div id="description" class="gridContainer">
+                <p>Results:</p>
+                <P id="result"></p>
+            </div>
+            <div id="instruction" class="gridContainer">
+                <h3>Instruction:</h3>
+                <p>Guess letters one at a time to solve the word puzzle. Click a letter to guess it.</p>
+            </div>
+        </div>
+
+    </body>
+</html>

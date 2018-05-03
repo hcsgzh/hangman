@@ -1,0 +1,60 @@
+
+.gridContainer{
+    position: relative;
+    margin-top: 10px;
+    padding: 0 0 0 0;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+.cell {
+    width: 72px;
+    height: 36px;
+    position: relative;
+    float: left;
+    z-index: 0;
+    font-size: 14px;
+    color: #888888;
+    text-align: center;
+    line-height: 36px;
+    border-style: solid outset;
+    border-width: 1px;
+    border-color: black;
+    cursor: pointer;
+}
+.cell_white {
+    width: 72px;
+    height: 36px;
+    position: relative;
+    float: left;
+    z-index: 0;
+    font-size: 14px;
+    color: #888888;
+    text-align: center;
+    line-height: 36px;
+    border-style: solid outset;
+    border-width: 1px;
+    border-color: white;
+    cursor: pointer;
+}
+.cellBackground-blue{
+    border-color: red;
+}
+.cellBackground-black{
+    border-color: black;
+}
+.cell:hover {
+    /*background: #00CCFF;*/
+}
+.cell:hover:after {
+    content: attr(data-hover-text);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    font-size: x-small;
+    font-weight: normal;
+    font-style: normal;
+    color: #444444;
+    text-align: left;
+    line-height: 1;
+}
+
